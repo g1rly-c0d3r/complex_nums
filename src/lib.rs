@@ -5,7 +5,7 @@
 //! # Examples
 //!
 //! ```rust
-//! use complex::*;
+//! use complex_nums::*;
 //!
 //! // Variables can be constructed using struct-builder notation,
 //! let a = Complex{ re: 3.0, im: 4.0 }; // Ok
@@ -17,7 +17,7 @@
 
 mod complex;
 
-pub use complex::*;
+pub use crate::complex::*;
 
 #[allow(non_snake_case)]
 #[cfg(test)]
@@ -28,8 +28,12 @@ mod test {
     fn test_mul() {
         let a = Complex { re: 2.0, im: 2.0 };
         let b = Complex { re: 3.0, im: 3.0 };
+        let c = 2.5;
 
         assert_eq!(a * b, Complex { re: 0.0, im: 12.0 });
+        assert_eq!(b * a, Complex { re: 0.0, im: 12.0 });
+        assert_eq!(a * c, Complex { re: 5.0, im: 5.0 });
+        assert_eq!(c * b, Complex { re: 7.5, im: 7.5 });
     }
 
     #[test]
@@ -40,16 +44,12 @@ mod test {
     }
 
     #[test]
-    fn test_mul_rhs() {
-        let a = Complex { re: 4.0, im: 5.0 };
-
-        assert_eq!(a * 5.0, Complex { re: 20.0, im: 25.0 });
-    }
-
     fn test_add() {
         let a = 2.0 * I;
-        let b = 3.0;
+        let b = 1.0 + 4.0 * I;
+        let c = 3.0;
 
-        assert_eq!(a + b, Complex { re: 3.0, im: 2.0 });
+        assert_eq!(a + c, Complex { re: 3.0, im: 2.0 });
+        assert_eq!(c + a, Complex { re: 3.0, im: 2.0 });
     }
 }

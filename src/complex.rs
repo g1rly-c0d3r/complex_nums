@@ -8,7 +8,7 @@ pub const I: Complex = Complex { re: 0.0, im: 1.0 };
 /// Complex Numberical type, with real and Imaginary parts existing in the Reals(`f64`)
 ///
 ///
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Complex {
     pub re: f64,
     pub im: f64,
@@ -56,6 +56,27 @@ impl std::ops::Mul<Complex> for f64 {
         Complex {
             re: self * rhs.re,
             im: self * rhs.im,
+        }
+    }
+}
+
+impl std::ops::Add<f64> for Complex {
+    type Output = Complex;
+
+    fn add(self, rhs: f64) -> Self::Output {
+        Complex {
+            re: self.re + rhs,
+            im: self.im,
+        }
+    }
+}
+
+impl std::ops::Add<Complex> for f64 {
+    type Output = Complex;
+    fn add(self, rhs: Complex) -> Self::Output {
+        Complex {
+            re: self + rhs.re,
+            im: rhs.im,
         }
     }
 }
