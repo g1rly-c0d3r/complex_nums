@@ -1,8 +1,9 @@
-//! The actuall module
+//! The actual module
 
 use std::{f64, fmt};
 
-/// Imaginary unit (`0 + 1*i`)
+/// Imaginary unit:
+/// `I = sqrt(-1)`
 pub const I: Complex = Complex { re: 0.0, im: 1.0 };
 
 /// Complex Numberical type, with real and Imaginary parts existing in the Reals(`f64`)
@@ -80,3 +81,49 @@ impl std::ops::Add<Complex> for f64 {
         }
     }
 }
+
+impl std::ops::Add<Complex> for Complex {
+    type Output = Complex;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Complex {
+            re: self.re + rhs.re,
+            im: self.im + rhs.im,
+        }
+    }
+}
+
+impl std::ops::Sub<f64> for Complex {
+    type Output = Complex;
+
+    fn sub(self, rhs: f64) -> Self::Output {
+        Complex {
+            re: self.re - rhs,
+            im: self.im,
+        }
+    }
+}
+
+impl std::ops::Sub<Complex> for f64 {
+    type Output = Complex;
+
+    fn sub(self, rhs: Complex) -> Self::Output {
+        Complex {
+            re: self - rhs.re,
+            im: rhs.im,
+        }
+    }
+}
+
+impl std::ops::Sub<Complex> for Complex {
+    type Output = Complex;
+
+    fn sub(self, rhs: Complex) -> Self::Output {
+        Complex {
+            re: self.re - rhs.re,
+            im: self.im - rhs.im,
+        }
+    }
+}
+
+// TODO: implement division for complex numbers
