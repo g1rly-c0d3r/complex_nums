@@ -7,8 +7,6 @@ use std::{f64, fmt};
 pub const I: Complex = Complex { re: 0.0, im: 1.0 };
 
 /// Complex Numberical type, with real and Imaginary parts existing in the Reals(`f64`)
-///
-///
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Complex {
     pub re: f64,
@@ -156,4 +154,40 @@ impl std::ops::Sub<Complex> for Complex {
     }
 }
 
-// TODO: implement division for complex numbers
+impl std::ops::Div<f64> for Complex {
+    type Output = Complex;
+
+    /// Division by reals is simple, and is the same as multiplying by a real.
+    /// `(a + b*I) / c == (a/c) + (b/c)*I`
+    fn div(self, rhs: f64) -> Self::Output {
+        Complex {
+            re: self.re / rhs,
+            im: self.im / rhs,
+        }
+    }
+}
+
+impl std::ops::Div<Complex> for Complex {
+    type Output = Complex;
+
+    /// Division works by rationalizing the denominator (multiplying both operands by `rhs.bar()`), and combining terms.
+    fn div(self, rhs: Complex) -> Self::Output {
+        Complex {
+            re: (self.re * rhs.re + self.im * rhs.im) / (rhs.re.powi(2) + rhs.im.powi(2)),
+            im: (self.im * rhs.re - self.re * rhs.im) / (rhs.re.powi(2) + rhs.im.powi(2)),
+        }
+    }
+}
+
+impl std::ops::Div<Complex> for f64 {
+    type Output = Complex;
+
+    /// Division of a real number by a complex number is similar to complex-complex division,
+    /// where we must rationalize the denominator.
+    fn div(self, rhs: Complex) -> Self::Output {
+        Complex {
+            re: (self * rhs.re) / (rhs.re.powi(2) + rhs.im.powi(2)),
+            im: -(self * rhs.im) / (rhs.re.powi(2) + rhs.im.powi(2)),
+        }
+    }
+}

@@ -20,6 +20,7 @@
 //! Addition, Subtraction, Multiplication, and Division are implemented for both real-complex and complex-complex operations.
 //! Comutative operations are comutative, non-commutative operations are implemented for both
 //! directions.
+//!
 //! ```rust
 //! use complex_nums::*;
 //!
@@ -46,6 +47,10 @@
 //! assert_eq!(a - c, Complex { re: -2.5999999999999996, im: 3.0 });
 //! assert_eq!(c - b, Complex { re: 3.0999999999999996, im: -7.4});
 //!
+//! // Division is a little more complex,
+//! // please see the documentation for the div operator.
+//! assert_eq!(a / b, Complex { re: 0.44202771443606387, im: -0.18067005788458165});
+//! assert_eq!(a / c, Complex { re: 1.0, im: 2.});
 //!
 //! ```
 //!
@@ -56,7 +61,7 @@
 //! let a = 3.0 + 4.0*I;
 //!
 //! assert_eq!(a.bar(), 3.0 - 4.0*I);
-//! assert_eq!(a.pow(2), Complex { re: -7.0, im: 24.0});
+//! assert_eq!(a.pow(2), -7. + 24.*I);
 //! ```
 // TODO: write documentation for division, conjugate, and modulus
 
@@ -142,5 +147,16 @@ mod test {
         let a = 3.0 + 4.0 * I;
 
         assert_eq!(a.pow(2), Complex { re: -7.0, im: 24.0 });
+    }
+
+    #[test]
+    fn test_div() {
+        let a = 3. + 4. * I;
+        let b = 6. + 7. * I;
+        let c = 2.;
+
+        assert_eq!(a / b, 0.5411764705882353 + I * 0.03529411764705882);
+        assert_eq!(a / c, 1.5 + I * 2.);
+        assert_eq!(c / b, 0.1411764705882353 - I * 0.16470588235294117);
     }
 }
