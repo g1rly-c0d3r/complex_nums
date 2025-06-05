@@ -3,7 +3,7 @@
 use std::{f64, fmt};
 
 /// Imaginary unit:
-/// `I = sqrt(-1)`
+/// `I*I = -1.0`
 pub const I: Complex = Complex { re: 0.0, im: 1.0 };
 
 /// Complex Numberical type, with real and Imaginary parts existing in the Reals(`f64`)
@@ -13,6 +13,37 @@ pub const I: Complex = Complex { re: 0.0, im: 1.0 };
 pub struct Complex {
     pub re: f64,
     pub im: f64,
+}
+
+impl Complex {
+    /// Returns the complex conjugate of self.
+    /// i.e. `(a + b*I).bar() == a - b*I`
+    pub fn bar(&self) -> Complex {
+        Complex {
+            re: self.re,
+            im: -self.im,
+        }
+    }
+
+    /// Returns magnitude (a.k.a modulus) of `self`.
+    /// i.e. `(a + b*I).abs() == (a*a + b*b).sqrt()`
+    pub fn abs(&self) -> f64 {
+        (self.re.powi(2) + self.im.powi(2)).sqrt()
+    }
+
+    /// Returns `self` raised to (integer) power `exp`
+    /// i.e. `(a + b*I).pow(n) == (a + b*I)*(a + b*I)*...(n times)...*(a + b*I)`
+    /// `(a + b*I).pow(2) => (a + b*I)*(a + b*I) => (a*a - b*b) + I*(a*b + b*a)`.
+    ///
+    /// Possibly very slow for large values of `exp`, as the logic is niave repeated
+    /// multiplication. TODO: use a better algoritm for exponentiation.
+    pub fn pow(&self, exp: isize) -> Complex {
+        let mut a = *self;
+        for _ in 0..exp - 1 {
+            a = a * *self;
+        }
+        a
+    }
 }
 
 impl fmt::Display for Complex {
@@ -84,7 +115,6 @@ impl std::ops::Add<Complex> for f64 {
 
 impl std::ops::Add<Complex> for Complex {
     type Output = Complex;
-
     fn add(self, rhs: Self) -> Self::Output {
         Complex {
             re: self.re + rhs.re,
@@ -95,7 +125,6 @@ impl std::ops::Add<Complex> for Complex {
 
 impl std::ops::Sub<f64> for Complex {
     type Output = Complex;
-
     fn sub(self, rhs: f64) -> Self::Output {
         Complex {
             re: self.re - rhs,
@@ -106,18 +135,19 @@ impl std::ops::Sub<f64> for Complex {
 
 impl std::ops::Sub<Complex> for f64 {
     type Output = Complex;
-
     fn sub(self, rhs: Complex) -> Self::Output {
         Complex {
             re: self - rhs.re,
-            im: rhs.im,
+            // gotta distribute the negative
+            // (this is why we write functions for this,
+            // I would not do this accidentally and be scratching my head for weeks)
+            im: -rhs.im,
         }
     }
 }
 
 impl std::ops::Sub<Complex> for Complex {
     type Output = Complex;
-
     fn sub(self, rhs: Complex) -> Self::Output {
         Complex {
             re: self.re - rhs.re,

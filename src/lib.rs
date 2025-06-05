@@ -11,7 +11,6 @@
 //! let a = Complex{ re: 3.0, im: 4.0 }; // Ok
 //!
 //! // or using cartesian notation.
-//!
 //! let b = 2.8 + 8.2*I; // also Ok
 //!
 //! ```
@@ -41,9 +40,25 @@
 //! assert_eq!(c + a, Complex { re: 6.6, im: 3.0 });
 //! assert_eq!(a + b, Complex { re: 3.5, im: 10.4});
 //!
+//! // Subtraction is implemented the same way
+//! // (if the complex number is the rhs, then the negative is distributed)
+//! assert_eq!(a - b, Complex { re: 0.5, im: -4.4});
+//! assert_eq!(a - c, Complex { re: -2.5999999999999996, im: 3.0 });
+//! assert_eq!(c - b, Complex { re: 3.0999999999999996, im: -7.4});
+//!
+//!
 //! ```
-
-// TODO: write documentation for subtraction & division
+//!
+//! The standard complex operators are implemented as well:
+//! ```rust
+//! use complex_nums::*;
+//!
+//! let a = 3.0 + 4.0*I;
+//!
+//! assert_eq!(a.bar(), 3.0 - 4.0*I);
+//! assert_eq!(a.pow(2), Complex { re: -7.0, im: 24.0});
+//! ```
+// TODO: write documentation for division, conjugate, and modulus
 
 mod complex;
 
@@ -83,5 +98,49 @@ mod test {
         assert_eq!(c + a, Complex { re: 3.0, im: 2.0 });
         assert_eq!(a + b, Complex { re: 1.0, im: 6.0 });
     }
-    // TODO: write test_sub function
+
+    #[test]
+    fn test_sub() {
+        let a = 3.6 + 12.0 * I;
+        let b = 5.4 + 2.0 * I;
+        let c = 6.7;
+
+        assert_eq!(
+            a - b,
+            Complex {
+                re: -1.8000000000000003,
+                im: 10.0
+            }
+        );
+
+        assert_eq!(a - c, Complex { re: -3.1, im: 12.0 });
+        assert_eq!(
+            c - b,
+            Complex {
+                re: 1.2999999999999998,
+                im: -2.0
+            }
+        );
+    }
+
+    #[test]
+    fn test_bar() {
+        let a = 3.0 + 4.7 * I;
+
+        assert_eq!(a.bar(), Complex { re: 3.0, im: -4.7 });
+    }
+
+    #[test]
+    fn test_abs() {
+        let a = 3.0 + 4.0 * I;
+
+        assert_eq!(a.abs(), 5.0);
+    }
+
+    #[test]
+    fn test_pow() {
+        let a = 3.0 + 4.0 * I;
+
+        assert_eq!(a.pow(2), Complex { re: -7.0, im: 24.0 });
+    }
 }
