@@ -50,7 +50,7 @@
 //! // Division is a little more complex,
 //! // please see the documentation for the div operator.
 //! assert_eq!(a / b, Complex { re: 0.44202771443606387, im: -0.18067005788458165});
-//! assert_eq!(a / c, Complex { re: 1.0, im: 2.});
+//! assert_eq!(a / c, Complex { re: 0.4347826086956522, im: 0.6521739130434783});
 //!
 //! ```
 //!
@@ -60,10 +60,14 @@
 //!
 //! let a = 3.0 + 4.0*I;
 //!
+//! // complex conjugate
 //! assert_eq!(a.bar(), 3.0 - 4.0*I);
+//! // z^n where n an integer.
+//! // VERY SLOW for large n, this will be fixed once polar form is implemented
 //! assert_eq!(a.pow(2), -7. + 24.*I);
+//! // Magnitude modulus of a complex number
+//! assert_eq!(a.abs(), 5.0)
 //! ```
-// TODO: write documentation for division, conjugate, and modulus
 
 mod complex;
 

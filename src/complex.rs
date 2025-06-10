@@ -1,5 +1,7 @@
 //! The actual module
 
+use std::f64::consts::PI;
+use std::fmt::Display;
 use std::{f64, fmt};
 
 /// Imaginary unit:
@@ -41,6 +43,52 @@ impl Complex {
             a = a * *self;
         }
         a
+    }
+
+    /// Also returns `self^exp`, but makes use of conversion to polar form,
+    /// hopefully much faster.
+    pub fn pow_polar(&self, exp: i32) -> Complex {
+        let mut a = self.polar();
+        a.r = a.r.powi(exp);
+        a.theta *= exp as f64;
+
+        a.cartesian()
+    }
+
+    /// Returns the polar form of `self`. The angle theta is in reference to the +real axis.
+    /// `theta` is checked so that its range is [0,2pi)
+    pub fn polar(&self) -> Polar {
+        let mut theta = (self.im / self.re).atan();
+        if self.re < 0.0 {
+            theta += PI;
+        }
+
+        let r = self.abs();
+
+        Polar { r, theta }
+    }
+}
+
+/// polar form of a complex number,
+/// z = r * exp(i * theta)
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct Polar {
+    /// radius,
+    /// `r = z.bar()`
+    pub r: f64,
+    /// angle with respect to the +x axis,
+    /// `tan(theta) = z.im / z.re`
+    /// I also bounds check to make sure that theta is between 0 and 2 pi
+    pub theta: f64,
+}
+
+impl Polar {
+    /// Turns a polar complex number back into `a + b*I` form.
+    pub fn cartesian(&self) -> Complex {
+        Complex {
+            re: self.r * self.theta.cos(),
+            im: self.r * self.theta.sin(),
+        }
     }
 }
 
@@ -189,5 +237,11 @@ impl std::ops::Div<Complex> for f64 {
             re: (self * rhs.re) / (rhs.re.powi(2) + rhs.im.powi(2)),
             im: -(self * rhs.im) / (rhs.re.powi(2) + rhs.im.powi(2)),
         }
+    }
+}
+
+impl Display for Polar {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{0}*exp(I*{1})", self.r, self.theta)
     }
 }
