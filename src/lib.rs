@@ -65,6 +65,13 @@
 //! // z^n where n an integer.
 //! // VERY SLOW for large n, this will be fixed once polar form is implemented
 //! assert_eq!(a.pow(2), -7. + 24.*I);
+//! // Different implementation of exponentiation, converting to polar,
+//! // exponentiating, and then converting back.
+//! // Slightly less accurate than the other one,
+//! // but much, much faster.
+//! assert!( (a.pow_polar(2) - (-7. + 24.*I)).re < 1e-3 &&
+//!             (a.pow_polar(2) - (-7. + 24.*I)).im < 1e-3 );
+//!
 //! // Magnitude modulus of a complex number
 //! assert_eq!(a.abs(), 5.0)
 //! ```
@@ -76,6 +83,8 @@ pub use crate::complex::*;
 #[allow(non_snake_case)]
 #[cfg(test)]
 mod test {
+    use std::f64::consts::PI;
+
     use super::*;
 
     #[test]
@@ -151,6 +160,10 @@ mod test {
         let a = 3.0 + 4.0 * I;
 
         assert_eq!(a.pow(2), Complex { re: -7.0, im: 24.0 });
+        assert!(
+            (a.pow_polar(2) - Complex { re: -7.0, im: 24.0 }).re < 1e-10
+                && (a.pow_polar(2) - Complex { re: -7.0, im: 24.0 }).im < 1e-10
+        );
     }
 
     #[test]
@@ -162,5 +175,27 @@ mod test {
         assert_eq!(a / b, 0.5411764705882353 + I * 0.03529411764705882);
         assert_eq!(a / c, 1.5 + I * 2.);
         assert_eq!(c / b, 0.1411764705882353 - I * 0.16470588235294117);
+    }
+
+    #[test]
+    fn test_polar() {
+        let a = 3.0 + 4.0 * I;
+        let b = -3. + 4. * I;
+
+        assert_eq!(
+            a.polar(),
+            Polar {
+                r: 5.,
+                theta: (4.0_f64 / 3.0).atan()
+            }
+        );
+
+        assert_eq!(
+            b.polar(),
+            Polar {
+                r: 5.,
+                theta: (4.0_f64 / -3.0).atan() + PI
+            }
+        );
     }
 }
