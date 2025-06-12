@@ -1,17 +1,14 @@
 //! A simple complex number library that I built to use for a university class.
 //!
-//! Author: eos Shapland
+//! Author: g1rly-c0d3r
 //!
 //! # Examples
 //!
 //! ```rust
 //! use complex_nums::*;
 //!
-//! // Variables can be constructed using struct-builder notation,
-//! let a = Complex{ re: 3.0, im: 4.0 }; // Ok
-//!
-//! // or using cartesian notation.
-//! let b = 2.8 + 8.2*I; // also Ok
+//! // Complex numbers are constructed using cartesian notation.
+//! let b = 2.8 + 8.2*I;
 //!
 //! ```
 //! Cartesian notation is the prefered way of instantiating and using this library.
@@ -30,27 +27,27 @@
 //!
 //! // Complex-Complex Multiplication takes the form (a+b*I)*(c+d*I),
 //! // and follows standard 'foiling' or distributing rules.
-//! assert_eq!(a * b, Complex { re: -19.200000000000003, im: 19.3 });
+//! assert_eq!(a * b,  -19.200000000000003 + 19.3*I );
 //! // real-complex Multiplication also follows this rule,
 //! // and effectively scales the complex number by the real number.
-//! assert_eq!(a * c, Complex { re: 9.2, im: 13.799999999999999 });
-//! assert_eq!(c * b, Complex { re: 6.8999999999999995, im: 34.04 });
+//! assert_eq!(a * c,  9.2 + 13.799999999999999*I );
+//! assert_eq!(c * b, 6.8999999999999995 + 34.04 *I);
 //!
 //! // addition is handled element-wise, so real parts add, and imaginary parts add.
-//! assert_eq!(a + c, Complex { re: 6.6, im: 3.0 });
-//! assert_eq!(c + a, Complex { re: 6.6, im: 3.0 });
-//! assert_eq!(a + b, Complex { re: 3.5, im: 10.4});
+//! assert_eq!(a + c, 6.6 + 3.0 *I);
+//! assert_eq!(c + a, 6.6 + 3.0 *I);
+//! assert_eq!(a + b, 3.5 + 10.4*I);
 //!
 //! // Subtraction is implemented the same way
 //! // (if the complex number is the rhs, then the negative is distributed)
-//! assert_eq!(a - b, Complex { re: 0.5, im: -4.4});
-//! assert_eq!(a - c, Complex { re: -2.5999999999999996, im: 3.0 });
-//! assert_eq!(c - b, Complex { re: 3.0999999999999996, im: -7.4});
+//! assert_eq!(a - b, 0.5 -4.4*I);
+//! assert_eq!(a - c, -2.5999999999999996 + 3.0*I );
+//! assert_eq!(c - b, 3.0999999999999996 - 7.4*I);
 //!
 //! // Division is a little more complex,
 //! // please see the documentation for the div operator.
-//! assert_eq!(a / b, Complex { re: 0.44202771443606387, im: -0.18067005788458165});
-//! assert_eq!(a / c, Complex { re: 0.4347826086956522, im: 0.6521739130434783});
+//! assert_eq!(a / b, 0.44202771443606387 - 0.18067005788458165*I);
+//! assert_eq!(a / c, 0.4347826086956522 + 0.6521739130434783*I);
 //!
 //! ```
 //!
@@ -68,9 +65,9 @@
 //! // Different implementation of exponentiation, converting to polar,
 //! // exponentiating, and then converting back.
 //! // Slightly less accurate than the other one,
-//! // but much, much faster.
-//! assert!( (a.pow_polar(2) - (-7. + 24.*I)).re < 1e-3 &&
-//!             (a.pow_polar(2) - (-7. + 24.*I)).im < 1e-3 );
+//! // but much, much faster. (1 us vs ~80 ns to compute z^(2^10))
+//! assert!( (a.pow_polar(2) - (-7. + 24.*I)).re() < 1e-10 &&
+//!             (a.pow_polar(2) - (-7. + 24.*I)).im() < 1e-10 );
 //!
 //! // Magnitude modulus of a complex number
 //! assert_eq!(a.abs(), 5.0)
@@ -89,21 +86,21 @@ mod test {
 
     #[test]
     fn test_mul() {
-        let a = Complex { re: 2.0, im: 2.0 };
-        let b = Complex { re: 3.0, im: 3.0 };
+        let a = 2. + 2. * I;
+        let b = 3.0 + 3.0 * I;
         let c = 2.5;
 
-        assert_eq!(a * b, Complex { re: 0.0, im: 12.0 });
-        assert_eq!(b * a, Complex { re: 0.0, im: 12.0 });
-        assert_eq!(a * c, Complex { re: 5.0, im: 5.0 });
-        assert_eq!(c * b, Complex { re: 7.5, im: 7.5 });
+        assert_eq!(a * b, 12.0 * I);
+        assert_eq!(b * a, 12.0 * I);
+        assert_eq!(a * c, 5.0 + 5.0 * I);
+        assert_eq!(c * b, 7.5 + 7.5 * I);
     }
 
     #[test]
     fn test_I() {
         let a: f64 = 10.0;
 
-        assert_eq!(a * I, Complex { re: 0.0, im: 10.0 });
+        assert_eq!(a * I, 10.0 * I);
     }
 
     #[test]
@@ -112,9 +109,9 @@ mod test {
         let b = 1.0 + 4.0 * I;
         let c = 3.0;
 
-        assert_eq!(a + c, Complex { re: 3.0, im: 2.0 });
-        assert_eq!(c + a, Complex { re: 3.0, im: 2.0 });
-        assert_eq!(a + b, Complex { re: 1.0, im: 6.0 });
+        assert_eq!(a + c, 3.0 + 2.0 * I);
+        assert_eq!(c + a, 3.0 + 2.0 * I);
+        assert_eq!(a + b, 1.0 + 6.0 * I);
     }
 
     #[test]
@@ -123,29 +120,17 @@ mod test {
         let b = 5.4 + 2.0 * I;
         let c = 6.7;
 
-        assert_eq!(
-            a - b,
-            Complex {
-                re: -1.8000000000000003,
-                im: 10.0
-            }
-        );
+        assert_eq!(a - b, -1.8000000000000003 + 10.0 * I);
 
-        assert_eq!(a - c, Complex { re: -3.1, im: 12.0 });
-        assert_eq!(
-            c - b,
-            Complex {
-                re: 1.2999999999999998,
-                im: -2.0
-            }
-        );
+        assert_eq!(a - c, -3.1 + 12.0 * I);
+        assert_eq!(c - b, 1.2999999999999998 + -2.0 * I);
     }
 
     #[test]
     fn test_bar() {
         let a = 3.0 + 4.7 * I;
 
-        assert_eq!(a.bar(), Complex { re: 3.0, im: -4.7 });
+        assert_eq!(a.bar(), 3.0 - 4.7 * I);
     }
 
     #[test]
@@ -159,10 +144,10 @@ mod test {
     fn test_pow() {
         let a = 3.0 + 4.0 * I;
 
-        assert_eq!(a.pow(2), Complex { re: -7.0, im: 24.0 });
+        assert_eq!(a.pow(2), -7.0 + 24.0 * I);
         assert!(
-            (a.pow_polar(2) - Complex { re: -7.0, im: 24.0 }).re < 1e-10
-                && (a.pow_polar(2) - Complex { re: -7.0, im: 24.0 }).im < 1e-10
+            (a.pow_polar(2) - (-7.0 + 24.0 * I)).re() < 1e-10
+                && (a.pow_polar(2) - (-7.0 + 24.0 * I)).im() < 1e-10
         );
     }
 

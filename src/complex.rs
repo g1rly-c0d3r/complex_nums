@@ -11,11 +11,20 @@ pub const I: Complex = Complex { re: 0.0, im: 1.0 };
 /// Complex Numberical type, with real and Imaginary parts existing in the Reals(`f64`)
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Complex {
-    pub re: f64,
-    pub im: f64,
+    re: f64,
+    im: f64,
 }
 
 impl Complex {
+    /// Getter function for the real part of `self`
+    pub fn re(&self) -> f64 {
+        self.re
+    }
+
+    pub fn im(&self) -> f64 {
+        self.im
+    }
+
     /// Returns the complex conjugate of self.
     /// i.e. `(a + b*I).bar() == a - b*I`
     pub fn bar(&self) -> Complex {
