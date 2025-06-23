@@ -21,6 +21,7 @@ impl Complex {
         self.re
     }
 
+    /// Getter function for the Imaginary part of `self`
     pub fn im(&self) -> f64 {
         self.im
     }
