@@ -41,23 +41,15 @@ impl Complex {
         (self.re.powi(2) + self.im.powi(2)).sqrt()
     }
 
-    /// Returns `self` raised to (integer) power `exp`
-    /// i.e. `(a + b*I).pow(n) == (a + b*I)*(a + b*I)*...(n times)...*(a + b*I)`
-    /// `(a + b*I).pow(2) => (a + b*I)*(a + b*I) => (a*a - b*b) + I*(a*b + b*a)`.
-    ///
-    /// Possibly very slow for large values of `exp`, as the logic is niave repeated
-    /// multiplication. TODO: use a better algoritm for exponentiation.
-    pub fn pow(&self, exp: isize) -> Complex {
-        let mut a = *self;
-        for _ in 0..exp - 1 {
-            a = a * *self;
-        }
-        a
+    /// Returns argument of z, `0<arg(z)<2*pi`.
+    pub fn arg(&self) -> f64 {
+        self.polar().theta()
     }
 
-    /// Also returns `self^exp`, but makes use of conversion to polar form,
-    /// hopefully much faster.
-    pub fn pow_polar(&self, exp: i32) -> Complex {
+    /// Returns `self ** exp`, where x  is an integer.
+    /// Uses the polar form of `self`, so has the same time complexity as the stdlib `powi`
+    /// function for floats.
+    pub fn pow(&self, exp: i32) -> Complex {
         let mut a = self.polar();
         a.r = a.r.powi(exp);
         a.theta *= exp as f64;
@@ -93,6 +85,14 @@ pub struct Polar {
 }
 
 impl Polar {
+    /// Getter function for the radius of a complex number.
+    pub fn r(&self) -> f64 {
+        self.r
+    }
+    /// Getter function for the argument
+    pub fn theta(&self) -> f64 {
+        self.theta
+    }
     /// Turns a polar complex number back into `a + b*I` form.
     pub fn cartesian(&self) -> Complex {
         Complex {
@@ -247,6 +247,14 @@ impl std::ops::Div<Complex> for f64 {
             re: (self * rhs.re) / (rhs.re.powi(2) + rhs.im.powi(2)),
             im: -(self * rhs.im) / (rhs.re.powi(2) + rhs.im.powi(2)),
         }
+    }
+}
+
+impl std::ops::Neg for Complex {
+    type Output = Complex;
+
+    fn neg(self) -> Self::Output {
+        -self.re - self.im * I
     }
 }
 

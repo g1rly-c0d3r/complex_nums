@@ -59,15 +59,12 @@
 //!
 //! // complex conjugate
 //! assert_eq!(a.bar(), 3.0 - 4.0*I);
-//! // z^n where n an integer.
-//! // VERY SLOW for large n, this will be fixed once polar form is implemented
-//! assert_eq!(a.pow(2), -7. + 24.*I);
 //! // Different implementation of exponentiation, converting to polar,
 //! // exponentiating, and then converting back.
 //! // Slightly less accurate than the other one,
 //! // but much, much faster. (1 us vs ~80 ns to compute z^(2^10))
-//! assert!( (a.pow_polar(2) - (-7. + 24.*I)).re() < 1e-10 &&
-//!             (a.pow_polar(2) - (-7. + 24.*I)).im() < 1e-10 );
+//! assert!( (a.pow(2) - (-7. + 24.*I)).re() < 1e-10 &&
+//!             (a.pow(2) - (-7. + 24.*I)).im() < 1e-10 );
 //!
 //! // Magnitude modulus of a complex number
 //! assert_eq!(a.abs(), 5.0)
@@ -144,10 +141,9 @@ mod test {
     fn test_pow() {
         let a = 3.0 + 4.0 * I;
 
-        assert_eq!(a.pow(2), -7.0 + 24.0 * I);
         assert!(
-            (a.pow_polar(2) - (-7.0 + 24.0 * I)).re() < 1e-10
-                && (a.pow_polar(2) - (-7.0 + 24.0 * I)).im() < 1e-10
+            (a.pow(2) - (-7.0 + 24.0 * I)).re() < 1e-10
+                && (a.pow(2) - (-7.0 + 24.0 * I)).im() < 1e-10
         );
     }
 
@@ -182,5 +178,18 @@ mod test {
                 theta: (4.0_f64 / -3.0).atan() + PI
             }
         );
+    }
+
+    #[test]
+    fn test_neg() {
+        let a = 3. + 4. * I;
+        let b = -2. + 3. * I;
+        let c = 4. - 6. * I;
+        let d = -1. - 6. * I;
+
+        assert_eq!(-a, -3. - 4. * I);
+        assert_eq!(-b, 2. - 3. * I);
+        assert_eq!(-c, -4. + 6. * I);
+        assert_eq!(-d, 1. + 6. * I);
     }
 }
