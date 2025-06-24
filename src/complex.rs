@@ -1,7 +1,6 @@
 //! The actual module
 
 use std::f64::consts::PI;
-use std::fmt::Display;
 use std::{f64, fmt};
 
 /// Imaginary unit:
@@ -27,8 +26,8 @@ impl Complex {
     }
 
     /// Returns the complex conjugate of self.
-    /// i.e. `(a + b*I).bar() == a - b*I`
-    pub fn bar(&self) -> Complex {
+    /// i.e. `(a + b*I).star() == a - b*I`
+    pub fn star(&self) -> Complex {
         Complex {
             re: self.re,
             im: -self.im,
@@ -43,7 +42,12 @@ impl Complex {
 
     /// Returns argument of z, `0<arg(z)<2*pi`.
     pub fn arg(&self) -> f64 {
-        self.polar().theta()
+        let mut theta = (self.im / self.re).atan();
+        if self.re < 0.0 || (self.im < 0.0 && self.re == 0.0) {
+            theta += PI;
+        }
+
+        theta
     }
 
     /// Returns `self ** exp`, where x  is an integer.
@@ -59,11 +63,8 @@ impl Complex {
 
     /// Returns the polar form of `self`. The angle theta is in reference to the +real axis.
     /// `theta` is checked so that its range is [0,2pi)
-    pub fn polar(&self) -> Polar {
-        let mut theta = (self.im / self.re).atan();
-        if self.re < 0.0 {
-            theta += PI;
-        }
+    fn polar(&self) -> Polar {
+        let theta = self.arg();
 
         let r = self.abs();
 
@@ -74,27 +75,19 @@ impl Complex {
 /// polar form of a complex number,
 /// z = r * exp(i * theta)
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Polar {
+struct Polar {
     /// radius,
-    /// `r = z.bar()`
-    pub r: f64,
+    /// `r = z.star()`
+    r: f64,
     /// angle with respect to the +x axis,
     /// `tan(theta) = z.im / z.re`
     /// I also bounds check to make sure that theta is between 0 and 2 pi
-    pub theta: f64,
+    theta: f64,
 }
 
 impl Polar {
-    /// Getter function for the radius of a complex number.
-    pub fn r(&self) -> f64 {
-        self.r
-    }
-    /// Getter function for the argument
-    pub fn theta(&self) -> f64 {
-        self.theta
-    }
     /// Turns a polar complex number back into `a + b*I` form.
-    pub fn cartesian(&self) -> Complex {
+    fn cartesian(&self) -> Complex {
         Complex {
             re: self.r * self.theta.cos(),
             im: self.r * self.theta.sin(),
@@ -228,7 +221,7 @@ impl std::ops::Div<f64> for Complex {
 impl std::ops::Div<Complex> for Complex {
     type Output = Complex;
 
-    /// Division works by rationalizing the denominator (multiplying both operands by `rhs.bar()`), and combining terms.
+    /// Division works by rationalizing the denominator (multiplying both operands by `rhs.star()`), and combining terms.
     fn div(self, rhs: Complex) -> Self::Output {
         Complex {
             re: (self.re * rhs.re + self.im * rhs.im) / (rhs.re.powi(2) + rhs.im.powi(2)),
@@ -255,11 +248,5 @@ impl std::ops::Neg for Complex {
 
     fn neg(self) -> Self::Output {
         -self.re - self.im * I
-    }
-}
-
-impl Display for Polar {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{0}*exp(I*{1})", self.r, self.theta)
     }
 }
