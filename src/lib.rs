@@ -58,7 +58,7 @@
 //! let a = 3.0 + 4.0*I;
 //!
 //! // complex conjugate
-//! assert_eq!(a.bar(), 3.0 - 4.0*I);
+//! assert_eq!(a.star(), 3.0 - 4.0*I);
 //! // Different implementation of exponentiation, converting to polar,
 //! // exponentiating, and then converting back.
 //! // Slightly less accurate than the other one,
@@ -124,10 +124,43 @@ mod test {
     }
 
     #[test]
-    fn test_bar() {
+    fn test_star() {
         let a = 3.0 + 4.7 * I;
 
-        assert_eq!(a.bar(), 3.0 - 4.7 * I);
+        assert_eq!(a.star(), 3.0 - 4.7 * I);
+    }
+
+    #[test]
+    fn test_arg() {
+        let a = 1. + 0. * I;
+        let b = 1. + 2. * I;
+        let c = 1. + I;
+        let d = 2. + I;
+        let e = I;
+
+        // 1st quadrant
+        assert_eq!(a.arg(), 0.);
+        assert!((b.arg() - 2.0_f64.atan()).abs() < 1e-10);
+        assert!((c.arg() - PI / 4.).abs() < 1e-10);
+        assert!((d.arg() - 0.5_f64.atan()).abs() < 1e-10);
+        assert!((e.arg() - PI / 2.).abs() < 1e-10);
+
+        // 2nd quadrant
+        assert!(((I * a).arg() - PI / 2.).abs() < 1e-10);
+        assert!(((I * b).arg() - (PI - 0.5_f64.atan())).abs() < 1e-10);
+        assert!(((I * c).arg() - 3. * PI / 4.).abs() < 1e-10);
+        assert!(((I * d).arg() - (PI - 2_f64.atan())).abs() < 1e-10);
+        assert!(((I * e).arg() - PI).abs() < 1e-10);
+
+        // 3rd quadrant
+        assert!(((I * I * a).arg() - PI).abs() < 1e-10);
+        assert!(((I * I * b).arg() - (2_f64.atan() + PI)).abs() < 1e-10);
+        assert!(((I * I * c).arg() - 5. * PI / 4.).abs() < 1e-10);
+        assert!(((I * I * d).arg() - (0.5_f64.atan() + PI)).abs() < 1e-10);
+        assert!(((I * I * e).arg() - 1.5 * PI).abs() < 1e-10);
+
+        // 4th quadrant
+        assert!(((I * I * I * a).arg() - (1.5 * PI)).abs() < 1e-10);
     }
 
     #[test]
@@ -140,10 +173,25 @@ mod test {
     #[test]
     fn test_pow() {
         let a = 3.0 + 4.0 * I;
+        let b = -3. + 4. * I;
+        let c = 3. - 4. * I;
+        let d = -3. - 4. * I;
 
         assert!(
             (a.pow(2) - (-7.0 + 24.0 * I)).re() < 1e-10
                 && (a.pow(2) - (-7.0 + 24.0 * I)).im() < 1e-10
+        );
+        assert!(
+            (b.pow(2) - (7.0 + 24.0 * I)).re() < 1e-10
+                && (b.pow(2) - (7.0 + 24.0 * I)).im() < 1e-10
+        );
+        assert!(
+            (c.pow(2) - (7.0 + 24.0 * I)).re() < 1e-10
+                && (c.pow(2) - (7.0 + 24.0 * I)).im() < 1e-10
+        );
+        assert!(
+            (d.pow(2) - (-7.0 + 24.0 * I)).re() < 1e-10
+                && (d.pow(2) - (-7.0 + 24.0 * I)).im() < 1e-10
         );
     }
 
@@ -156,28 +204,6 @@ mod test {
         assert_eq!(a / b, 0.5411764705882353 + I * 0.03529411764705882);
         assert_eq!(a / c, 1.5 + I * 2.);
         assert_eq!(c / b, 0.1411764705882353 - I * 0.16470588235294117);
-    }
-
-    #[test]
-    fn test_polar() {
-        let a = 3.0 + 4.0 * I;
-        let b = -3. + 4. * I;
-
-        assert_eq!(
-            a.polar(),
-            Polar {
-                r: 5.,
-                theta: (4.0_f64 / 3.0).atan()
-            }
-        );
-
-        assert_eq!(
-            b.polar(),
-            Polar {
-                r: 5.,
-                theta: (4.0_f64 / -3.0).atan() + PI
-            }
-        );
     }
 
     #[test]
