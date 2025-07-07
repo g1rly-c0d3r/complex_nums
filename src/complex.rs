@@ -40,10 +40,21 @@ impl Complex {
         (self.re.powi(2) + self.im.powi(2)).sqrt()
     }
 
-    /// Returns argument of z, `0<arg(z)<2*pi`.
+    /// Returns argument of z, `-pi<arg(z)<=pi`.
     pub fn arg(&self) -> f64 {
         let mut theta = (self.im / self.re).atan();
-        if self.re < 0.0 || (self.im < 0.0 && self.re == 0.0) {
+
+        if self.im > 0.0 && self.re < 0.0 {
+            theta += PI;
+        } else if self.im < 0.0 && self.re <= 0.0 {
+            theta -= PI;
+        }
+
+        if theta == 0.0 && self.re < 0.0 {
+            theta += PI;
+        }
+
+        if theta <= -PI {
             theta += PI;
         }
 

@@ -154,13 +154,17 @@ mod test {
 
         // 3rd quadrant
         assert!(((I * I * a).arg() - PI).abs() < 1e-10);
-        assert!(((I * I * b).arg() - (2_f64.atan() + PI)).abs() < 1e-10);
-        assert!(((I * I * c).arg() - 5. * PI / 4.).abs() < 1e-10);
-        assert!(((I * I * d).arg() - (0.5_f64.atan() + PI)).abs() < 1e-10);
-        assert!(((I * I * e).arg() - 1.5 * PI).abs() < 1e-10);
+        assert!(((I * I * b).arg() - (2_f64.atan() - PI)).abs() < 1e-10);
+        assert!(((I * I * c).arg() - (1_f64.atan() - PI)).abs() < 1e-10);
+        assert!(((I * I * d).arg() - (0.5_f64.atan() - PI)).abs() < 1e-10);
+        assert!(((I * I * e).arg() - -0.5 * PI).abs() < 1e-10);
 
         // 4th quadrant
-        assert!(((I * I * I * a).arg() - (1.5 * PI)).abs() < 1e-10);
+        assert!(((I * I * I * a).arg() - -0.5 * PI).abs() < 1e-10);
+        assert!(((I * I * I * b).arg() - -0.5_f64.atan()).abs() < 1e-10);
+        assert!(((I * I * I * c).arg() - -1_f64.atan()).abs() < 1e-10);
+        assert!(((I * I * I * d).arg() - -2_f64.atan()).abs() < 1e-10);
+        assert!(((I * I * I * e).arg() - 0.0).abs() < 1e-10);
     }
 
     #[test]
