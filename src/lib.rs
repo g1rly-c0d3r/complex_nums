@@ -63,8 +63,8 @@
 //! // exponentiating, and then converting back.
 //! // Slightly less accurate than the other one,
 //! // but much, much faster. (1 us vs ~80 ns to compute z^(2^10))
-//! assert!( (a.pow(2) - (-7. + 24.*I)).re() < 1e-10 &&
-//!             (a.pow(2) - (-7. + 24.*I)).im() < 1e-10 );
+//! assert!( (a.powi(2) - (-7. + 24.*I)).re() < 1e-10 &&
+//!             (a.powi(2) - (-7. + 24.*I)).im() < 1e-10 );
 //!
 //! // Magnitude modulus of a complex number
 //! assert_eq!(a.abs(), 5.0)
@@ -175,27 +175,27 @@ mod test {
     }
 
     #[test]
-    fn test_pow() {
+    fn test_powi() {
         let a = 3.0 + 4.0 * I;
         let b = -3. + 4. * I;
         let c = 3. - 4. * I;
         let d = -3. - 4. * I;
 
         assert!(
-            (a.pow(2) - (-7.0 + 24.0 * I)).re() < 1e-10
-                && (a.pow(2) - (-7.0 + 24.0 * I)).im() < 1e-10
+            (a.powi(2) - (-7.0 + 24.0 * I)).re() < 1e-10
+                && (a.powi(2) - (-7.0 + 24.0 * I)).im() < 1e-10
         );
         assert!(
-            (b.pow(2) - (7.0 + 24.0 * I)).re() < 1e-10
-                && (b.pow(2) - (7.0 + 24.0 * I)).im() < 1e-10
+            (b.powi(2) - (7.0 + 24.0 * I)).re() < 1e-10
+                && (b.powi(2) - (7.0 + 24.0 * I)).im() < 1e-10
         );
         assert!(
-            (c.pow(2) - (7.0 + 24.0 * I)).re() < 1e-10
-                && (c.pow(2) - (7.0 + 24.0 * I)).im() < 1e-10
+            (c.powi(2) - (7.0 + 24.0 * I)).re() < 1e-10
+                && (c.powi(2) - (7.0 + 24.0 * I)).im() < 1e-10
         );
         assert!(
-            (d.pow(2) - (-7.0 + 24.0 * I)).re() < 1e-10
-                && (d.pow(2) - (-7.0 + 24.0 * I)).im() < 1e-10
+            (d.powi(2) - (-7.0 + 24.0 * I)).re() < 1e-10
+                && (d.powi(2) - (-7.0 + 24.0 * I)).im() < 1e-10
         );
     }
 
@@ -221,5 +221,22 @@ mod test {
         assert_eq!(-b, 2. - 3. * I);
         assert_eq!(-c, -4. + 6. * I);
         assert_eq!(-d, 1. + 6. * I);
+    }
+
+    #[test]
+    fn test_ln() {
+        let z = 3. + 4. * I;
+
+        assert!(
+            (z.ln().re() - 1.6094379124341003).abs() < 1e-10
+                && (z.ln().im() - 0.927295218002).abs() < 1e-10
+        );
+    }
+
+    #[test]
+    fn test_powc() {
+        let z = 3. - 4.0 * I;
+
+        assert_eq!(z.ln(), 5_f64.ln() + I * (-4_f64 / 3.0).atan());
     }
 }

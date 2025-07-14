@@ -64,12 +64,27 @@ impl Complex {
     /// Returns `self ** exp`, where x  is an integer.
     /// Uses the polar form of `self`, so has the same time complexity as the stdlib `powi`
     /// function for floats.
-    pub fn pow(&self, exp: i32) -> Complex {
+    pub fn powi(&self, exp: i32) -> Complex {
         let mut a = self.polar();
         a.r = a.r.powi(exp);
         a.theta *= exp as f64;
 
         a.cartesian()
+    }
+
+    /// The complex logarithm function.
+    /// `ln(z) = log_e(|z|) + i arg(z)`
+    pub fn ln(&self) -> Complex {
+        self.abs().ln() + I * self.arg()
+    }
+
+    pub fn exp(&self) -> Complex {
+        self.re.exp() * (self.im.cos() + I * self.im.sin())
+    }
+
+    /// Complex power function.
+    pub fn powc(&self, z: Complex) -> Complex {
+        (z * self.ln()).exp()
     }
 
     /// Returns the polar form of `self`. The angle theta is in reference to the +real axis.
